@@ -6,50 +6,52 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import data.Maseches
-import data.createJunkDatabase
 import kotlinx.coroutines.launch
 import kotlin.math.sqrt
 
 @Composable
 fun BrowseQuestions() {
+    var showQuestionsFor: Maseches? by mutableStateOf(null)
+    val coroutineScope = rememberCoroutineScope()
     Centered {
-        val database = createJunkDatabase()
-        val coroutineScope = rememberCoroutineScope()
-        var masechtosState by remember { mutableStateOf(listOf<Maseches>()) }
-        coroutineScope.launch {
-            masechtosState = database.getAvailableMasechtos()
-        }
-        val sides = sqrt(masechtosState.size.toDouble()).toInt()
-        val iterator = masechtosState.iterator()
-        val layout = mutableListOf<MutableList<Maseches>>()
-        var currentRow = 0
-        var currentColumn = 0
-        while (iterator.hasNext()) {
-            if (currentColumn == 0) {
-                layout.add(mutableListOf())
+        if (showQuestionsFor == null) {
+            val masechtos = Maseches.values()
+            val sides = sqrt(masechtos.size.toDouble()).toInt()
+            val iterator = masechtos.iterator()
+            val layout = mutableListOf<MutableList<Maseches>>()
+            var currentRow = 0
+            var currentColumn = 0
+            while (iterator.hasNext()) {
+                if (currentColumn == 0) {
+                    layout.add(mutableListOf())
+                }
+                val row = layout[currentRow]
+                row.add(iterator.next())
+                currentColumn++
+                if (currentColumn == sides) {
+                    currentColumn = 0
+                    currentRow++
+                }
             }
-            val row = layout[currentRow]
-            row.add(iterator.next())
-            currentColumn++
-            if (currentColumn == sides) {
-                currentColumn = 0
-                currentRow++
+            MasechtosButtons(layout) { maseches -> showQuestionsFor = maseches }
+        } else {
+            val database = createJunkDatabase()
+            coroutineScope.launch {
+                val questions = database.getQuestionsFor(showQuestionsFor!!)
             }
         }
-        MasechtosButtons(layout)
     }
 
 }
 
 @Composable
-fun MasechtosButtons(layout: MutableList<MutableList<Maseches>>) {
+fun MasechtosButtons(layout: MutableList<MutableList<Maseches>>, onClick: (Maseches) -> Unit) {
     Column {
         layout.forEach { row ->
             Row {
                 row.forEach { button ->
-                    OutlinedButton(onClick = {}, modifier= Modifier.padding(5.dp)) {
-                        Text(button)
+                    OutlinedButton(onClick = { onClick(button) }, modifier = Modifier.padding(5.dp)) {
+                        Text(button.toString())
                     }
                 }
             }
