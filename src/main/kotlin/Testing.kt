@@ -39,7 +39,7 @@ internal fun createJunkDatabase() = object : Database {
                 ShortAnswerQuestion("What is the meaning of life?", "42"),
                 MultipleChoiceQuestion("What is 10x5?", options = listOf("10", "20", "50", "70", "80"), 4)
             ),
-            Mishnah(Maseches.BAVA_KAMMA, 1,3, "This is the third mishnah in the first perek of bava kamma") to listOf(
+            Mishnah(Maseches.BAVA_KAMMA, 2,3, "This is the third mishnah in the second perek of bava kamma") to listOf(
                 ShortAnswerQuestion("What Maseches is this in?","BK"),
                 ShortAnswerQuestion("How are you?", "Good")
             )
@@ -51,6 +51,7 @@ internal fun createJunkDatabase() = object : Database {
         perek: Perek,
         mishnah: Int?
     ): Map<Mishnah, Collection<Question>>? {
+        println("I was called")
         val questionsForMaseches = questions[maseches]?.filter { it.key.perek == perek }
         return if (mishnah != null) {
             return questionsForMaseches?.filter { it.key.number == mishnah }

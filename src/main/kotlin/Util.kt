@@ -15,3 +15,14 @@ fun Centered(content: @Composable () -> Unit) {
         content()
     }
 }
+
+@Composable
+fun LeftColumn(content: @Composable ()->Unit){
+    Column(
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxSize()
+    ){
+        content()
+    }
+}

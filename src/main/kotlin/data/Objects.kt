@@ -2,13 +2,13 @@ package data
 
 import Maseches
 
-interface Question {
+sealed interface Question {
     val question: String
     val answer: Any
 }
 typealias Option = String
 
-interface OptionsQuestion : Question {
+sealed interface OptionsQuestion : Question {
     val options: List<Option>
 }
 
